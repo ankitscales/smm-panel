@@ -1,186 +1,193 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drip-Feed SMM Panel | 24/7 Auto-Run</title>
+    <title>SMM Drip-Feed Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: linear-gradient(135deg, #0f0c29, #302b63);
             font-family: system-ui, sans-serif;
             padding: 16px;
+            color: white;
             min-height: 100vh;
         }
-        .container { max-width: 1400px; margin: 0 auto; }
         .card {
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 24px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 20px;
             margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
         }
-        h2 { color: white; margin-bottom: 20px; border-left: 4px solid #667eea; padding-left: 12px; }
-        .form-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
-        .form-group { flex: 1; min-width: 140px; }
-        label { color: rgba(255,255,255,0.7); font-size: 0.7rem; text-transform: uppercase; display: block; margin-bottom: 6px; }
-        input, select {
-            width: 100%; padding: 12px; background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2); border-radius: 12px;
-            color: white; font-size: 0.9rem;
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 10px;
+            border: none;
         }
-        .btn {
-            padding: 12px 24px; border: none; border-radius: 12px;
-            font-weight: 600; cursor: pointer; transition: 0.2s; color: white;
+        input {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            width: 180px;
         }
-        .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .btn-success { background: linear-gradient(135deg, #48bb78, #38a169); }
-        .btn-danger { background: linear-gradient(135deg, #f56565, #e53e3e); }
-        .btn-sm { padding: 8px 16px; font-size: 0.75rem; }
-        .status-badge { display: inline-block; padding: 6px 14px; border-radius: 30px; font-size: 0.75rem; }
-        .status-connected { background: rgba(72,187,120,0.2); color: #48bb78; }
+        button {
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+        }
         .campaign {
-            background: rgba(0,0,0,0.4); border-radius: 16px; padding: 16px;
-            margin-bottom: 12px; border: 1px solid rgba(102,126,234,0.2);
+            background: rgba(0,0,0,0.5);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
         }
-        .progress-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 12px 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: #48bb78; width: 0%; transition: width 0.3s; }
-        .logs { background: rgba(0,0,0,0.5); padding: 8px; border-radius: 12px; font-size: 0.7rem; font-family: monospace; max-height: 80px; overflow-y: auto; margin-top: 12px; }
-        .button-group { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-        canvas { background: rgba(0,0,0,0.4); border-radius: 16px; width: 100%; height: 200px; margin-top: 16px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 12px; margin-top: 16px; }
-        .stat-box { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 12px; text-align: center; }
-        .stat-value { font-size: 1.5rem; font-weight: 700; color: #a8b2ff; }
-        .curve-selector { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-        .curve-card {
-            flex: 1; background: rgba(0,0,0,0.4); border-radius: 16px; padding: 12px;
-            text-align: center; cursor: pointer; transition: 0.2s; border: 1px solid transparent;
+        .progress-bar {
+            height: 8px;
+            background: #333;
+            border-radius: 10px;
+            margin: 10px 0;
         }
-        .curve-card.selected { border-color: #667eea; background: rgba(102,126,234,0.2); }
-        .server-status {
-            position: fixed; bottom: 16px; left: 16px; background: #1a1a3e;
-            padding: 6px 12px; border-radius: 20px; font-size: 0.7rem; z-index: 1000;
+        .progress-fill {
+            height: 100%;
+            background: #48bb78;
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.3s;
         }
+        .status {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #1a1a3e;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        .logs {
+            font-size: 11px;
+            font-family: monospace;
+            margin-top: 8px;
+            color: #aaa;
+        }
+        .flex { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-sm { padding: 5px 12px; font-size: 12px; }
+        .btn-danger { background: #f56565; }
+        .btn-warning { background: #ed8936; }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="card">
-        <h2>⚡ 24/7 Auto-Run SMM Panel</h2>
-        <div class="stats-grid" style="margin-bottom: 16px;">
-            <div class="stat-box"><div>Server Status</div><div class="stat-value" id="serverStatus">🔌 Connecting...</div></div>
-            <div class="stat-box"><div>Balance</div><div class="stat-value" id="balanceDisplay">—</div></div>
-        </div>
-    </div>
+<div class="status" id="status">🟢 Connecting...</div>
 
-    <div class="card">
-        <h2>🎯 Create Campaign</h2>
-        <div class="curve-selector" id="curveSelector">
-            <div class="curve-card" data-curve="slow"><div>🐢</div><div>Slow</div><div>80-150</div></div>
-            <div class="curve-card selected" data-curve="moderate"><div>📈</div><div>Moderate</div><div>120-250</div></div>
-            <div class="curve-card" data-curve="viral"><div>🚀</div><div>Viral</div><div>100-400</div></div>
-        </div>
-        <div class="form-row">
-            <div class="form-group"><label>Service ID</label><input type="number" id="serviceId" value="13332"></div>
-            <div class="form-group"><label>Video Link</label><input type="text" id="videoLink" value="https://www.instagram.com/p/DXjJeKLzW8_/"></div>
-        </div>
-        <div class="form-row">
-            <div class="form-group"><label>Target Views</label><input type="number" id="target" value="4500"></div>
-            <div class="form-group"><label>Min Views</label><input type="number" id="minViews" value="120"></div>
-            <div class="form-group"><label>Max Views</label><input type="number" id="maxViews" value="250"></div>
-        </div>
-        <div class="form-row">
-            <div class="form-group"><label>Interval (minutes)</label><input type="number" id="interval" value="65"></div>
-            <div class="form-group"><button class="btn btn-success" id="createBtn" style="width:100%">✨ Create</button></div>
-        </div>
-        <canvas id="deliveryCurve" width="800" height="300"></canvas>
-    </div>
+<div class="card">
+    <h2>⚡ SMM Drip-Feed Panel</h2>
+    <div>💰 Balance: <strong id="balance">---</strong></div>
+    <div>🤖 Worker: <strong id="workerStatus">Checking...</strong></div>
+</div>
 
-    <div class="card">
-        <div style="display:flex; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap;">
-            <h2 style="margin:0;">📋 Active Campaigns</h2>
-            <div><button class="btn btn-sm" id="refreshBtn">🔄 Refresh</button></div>
-        </div>
-        <div id="campaignsList"><p style="text-align:center; padding:30px;">✨ Loading campaigns...</p></div>
+<div class="card">
+    <h2>🎯 Create Campaign</h2>
+    <div class="flex">
+        <div><label>Service ID</label><input type="text" id="serviceId" value="13636"></div>
+        <div><label>Video Link</label><input type="text" id="videoLink" value="https://www.instagram.com/p/DXjJeKLzW8_/"></div>
     </div>
+    <div class="flex">
+        <div><label>Target Views</label><input type="number" id="target" value="4500"></div>
+        <div><label>Min Views</label><input type="number" id="minViews" value="100"></div>
+        <div><label>Max Views</label><input type="number" id="maxViews" value="200"></div>
+        <div><label>Interval (min)</label><input type="number" id="interval" value="2"></div>
+    </div>
+    <button id="createBtn" style="width:100%; margin-top:10px;">✨ Create Campaign</button>
+</div>
+
+<div class="card">
+    <h2>📋 Active Campaigns</h2>
+    <button id="refreshBtn">🔄 Refresh</button>
+    <div id="campaignsList">Loading...</div>
 </div>
 
 <script>
-// API Base URL (change to your server URL when deployed)
 const API_URL = window.location.origin;
 
-let selectedCurve = 'moderate';
-const CURVE_PRESETS = {
-    slow: { min: 80, max: 150 },
-    moderate: { min: 120, max: 250 },
-    viral: { min: 100, max: 400 }
-};
-
-// ============================================
-// API CALLS
-// ============================================
-async function fetchAPI(endpoint, options = {}) {
+async function callAPI(endpoint, options = {}) {
     try {
-        const response = await fetch(`${API_URL}${endpoint}`, {
+        const res = await fetch(`${API_URL}${endpoint}`, {
             headers: { 'Content-Type': 'application/json' },
             ...options
         });
-        return await response.json();
-    } catch (error) {
-        console.error('API Error:', error);
-        return { success: false, error: error.message };
+        return await res.json();
+    } catch(e) {
+        console.error(e);
+        return { success: false };
     }
 }
 
 async function loadBalance() {
-    const result = await fetchAPI('/api/balance');
-    if (result.success) {
-        document.getElementById('balanceDisplay').innerHTML = `$${result.balance}`;
-        document.getElementById('serverStatus').innerHTML = '✅ Server Online';
+    const data = await callAPI('/api/balance');
+    if (data.success !== false) {
+        document.getElementById('balance').innerHTML = `$${data.balance?.toFixed(2) || data.balance || '0'}`;
+        document.getElementById('status').innerHTML = '🟢 Server Online';
+        document.getElementById('workerStatus').innerHTML = '✅ Running';
     } else {
-        document.getElementById('serverStatus').innerHTML = '⚠️ Server Error';
+        document.getElementById('status').innerHTML = '🔴 Server Error';
     }
 }
 
 async function loadCampaigns() {
-    const result = await fetchAPI('/api/campaigns');
-    if (result.success) {
-        renderCampaigns(result.campaigns);
-    }
-}
-
-async function createCampaign() {
-    const serviceId = document.getElementById('serviceId').value;
-    const link = document.getElementById('videoLink').value;
-    const target = parseInt(document.getElementById('target').value);
-    let minVal = parseInt(document.getElementById('minViews').value) || CURVE_PRESETS[selectedCurve].min;
-    let maxVal = parseInt(document.getElementById('maxViews').value) || CURVE_PRESETS[selectedCurve].max;
-    const interval = parseInt(document.getElementById('interval').value);
-    
-    if (!serviceId || !link || isNaN(target) || minVal <= 0 || maxVal < minVal || isNaN(interval)) {
-        alert('Please fill all fields correctly');
+    const data = await callAPI('/api/campaigns');
+    const container = document.getElementById('campaignsList');
+    if (!data.campaigns || data.campaigns.length === 0) {
+        container.innerHTML = '<p>✨ No campaigns. Create one above!</p>';
         return;
     }
     
-    const result = await fetchAPI('/api/campaigns', {
+    let html = '';
+    for (let c of data.campaigns) {
+        const percent = (c.delivered / c.target) * 100;
+        const statusColor = c.status === 'running' ? '#48bb78' : (c.status === 'paused' ? '#ed8936' : '#4299e1');
+        const statusText = c.status === 'running' ? '🟢 RUNNING' : (c.status === 'paused' ? '⏸️ PAUSED' : '✅ COMPLETED');
+        
+        html += `
+        <div class="campaign">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+                <strong>Campaign #${c.id}</strong>
+                <span style="color:${statusColor}">${statusText}</span>
+            </div>
+            <div>📊 ${c.delivered}/${c.target} views | 🎲 ${c.min_val}-${c.max_val} | ⏱️ Every ${c.interval}min | 📦 ${c.order_count} orders</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
+            <div>
+                ${c.status === 'running' ? `<button class="btn-sm btn-warning" onclick="updateStatus(${c.id}, 'paused')">⏸️ Pause</button>` : ''}
+                ${c.status === 'paused' ? `<button class="btn-sm" style="background:#48bb78" onclick="updateStatus(${c.id}, 'running')">▶️ Resume</button>` : ''}
+                <button class="btn-sm btn-danger" onclick="deleteCampaign(${c.id})">🗑️ Delete</button>
+            </div>
+            <div class="logs">${c.logs.slice(-5).map(l => `<div>${l}</div>`).join('')}</div>
+        </div>`;
+    }
+    container.innerHTML = html;
+}
+
+async function createCampaign() {
+    const data = {
+        service_id: document.getElementById('serviceId').value,
+        link: document.getElementById('videoLink').value,
+        target: parseInt(document.getElementById('target').value),
+        min_val: parseInt(document.getElementById('minViews').value),
+        max_val: parseInt(document.getElementById('maxViews').value),
+        interval: parseInt(document.getElementById('interval').value)
+    };
+    
+    const result = await callAPI('/api/campaigns', {
         method: 'POST',
-        body: JSON.stringify({
-            service_id: serviceId, link, target,
-            min_val: minVal, max_val: maxVal, interval_min: interval
-        })
+        body: JSON.stringify(data)
     });
     
     if (result.success) {
+        alert('Campaign created! It will start in a few seconds.');
         loadCampaigns();
-        playSound('rizz');
     } else {
         alert('Failed to create campaign');
     }
 }
 
-async function updateCampaignStatus(id, status) {
-    await fetchAPI(`/api/campaigns/${id}`, {
+async function updateStatus(id, status) {
+    await callAPI(`/api/campaigns/${id}`, {
         method: 'PUT',
         body: JSON.stringify({ status })
     });
@@ -188,92 +195,28 @@ async function updateCampaignStatus(id, status) {
 }
 
 async function deleteCampaign(id) {
-    await fetchAPI(`/api/campaigns/${id}`, { method: 'DELETE' });
+    if (confirm('Delete this campaign?')) {
+        await callAPI(`/api/campaigns/${id}`, { method: 'DELETE' });
+        loadCampaigns();
+    }
+}
+
+// Event listeners
+document.getElementById('createBtn').addEventListener('click', createCampaign);
+document.getElementById('refreshBtn').addEventListener('click', () => {
+    loadBalance();
     loadCampaigns();
-    playSound('fah');
-}
-
-// ============================================
-// RENDER CAMPAIGNS
-// ============================================
-function renderCampaigns(campaigns) {
-    const container = document.getElementById('campaignsList');
-    if (!campaigns || campaigns.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding:30px;">✨ No active campaigns</p>';
-        return;
-    }
-    
-    let html = '';
-    for (let c of campaigns) {
-        const progress = (c.delivered / c.target) * 100;
-        const statusColor = c.status === 'running' ? '#48bb78' : (c.status === 'paused' ? '#ed8936' : '#4299e1');
-        const statusText = c.status === 'running' ? '🟢 RUNNING' : (c.status === 'paused' ? '⏸️ PAUSED' : '✅ COMPLETED');
-        
-        html += `
-        <div class="campaign">
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap;">
-                <div><strong>👁️ Campaign #${c.id}</strong></div>
-                <span class="status-badge" style="background:${statusColor}20; color:${statusColor};">${statusText}</span>
-            </div>
-            <div>📊 ${c.delivered}/${c.target} views | 🎲 ${c.min_val}-${c.max_val} | ⏱️ Every ${c.interval_min}min | 📦 ${c.order_count} orders</div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
-            <div class="button-group">
-                ${c.status === 'running' ? `<button class="btn btn-sm" style="background:#ed8936;" onclick="updateCampaignStatus(${c.id}, 'paused')">⏸️ Pause</button>` : ''}
-                ${c.status === 'paused' ? `<button class="btn btn-sm btn-primary" onclick="updateCampaignStatus(${c.id}, 'running')">▶️ Resume</button>` : ''}
-                <button class="btn btn-sm btn-danger" onclick="deleteCampaign(${c.id})">🗑️ Delete</button>
-            </div>
-            <div class="logs">${c.logs.slice(-6).map(l => `<div>${l}</div>`).join('')}</div>
-        </div>`;
-    }
-    container.innerHTML = html;
-}
-
-// ============================================
-// SOUNDS & UTILITIES
-// ============================================
-function playSound(name) {
-    // Optional: add sounds
-}
-
-// Curve selection
-document.querySelectorAll('.curve-card').forEach(card => {
-    card.addEventListener('click', () => {
-        document.querySelectorAll('.curve-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        selectedCurve = card.dataset.curve;
-        const preset = CURVE_PRESETS[selectedCurve];
-        document.getElementById('minViews').placeholder = preset.min;
-        document.getElementById('maxViews').placeholder = preset.max;
-        updateCurve();
-    });
 });
 
-// Curve preview
-function updateCurve() {
-    const canvas = document.getElementById('deliveryCurve');
-    const ctx = canvas.getContext('2d');
-    const w = canvas.width, h = canvas.height;
-    ctx.fillStyle = '#1a202c';
-    ctx.fillRect(0, 0, w, h);
-    ctx.strokeStyle = '#48bb78';
-    ctx.beginPath();
-    ctx.moveTo(0, h);
-    for (let i = 0; i <= 20; i++) {
-        const x = (i / 20) * w;
-        const y = h - (Math.random() * 0.3 + 0.5) * h;
-        ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-}
-
-// Initialize
-document.getElementById('createBtn').addEventListener('click', createCampaign);
-document.getElementById('refreshBtn').addEventListener('click', () => { loadBalance(); loadCampaigns(); });
-
-updateCurve();
+// Auto-refresh every 3 seconds
 loadBalance();
 loadCampaigns();
-setInterval(() => { loadCampaigns(); }, 5000);
+setInterval(() => {
+    loadCampaigns();
+}, 3000);
+setInterval(() => {
+    loadBalance();
+}, 30000);
 </script>
 </body>
 </html>
